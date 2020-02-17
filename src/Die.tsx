@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React, { useEffect, useState } from "react";
+import styled, { keyframes } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faDiceOne,
@@ -12,13 +12,14 @@ import {
 
 import {DieType} from './App'
 
-type DieProsType = {
+type DiePropsType = {
     dieInfo: DieType ;
-    clickHandler: ()=>void
+    clickHandler: (id: string)=>void
 }
 
-export const Die: React.FC<DieProsType> = ({dieInfo, clickHandler}) => {
-    const { value, isFrozen} = dieInfo
+export const Die: React.FC<DiePropsType> = ({dieInfo, clickHandler}) => {
+    const {id, value, isFrozen, isSpinning} = dieInfo
+    // const [isSpinning, setIsSpinning] = useState(false);
   const diceView = {
     1: faDiceOne,
     2: faDiceTwo,
@@ -27,15 +28,27 @@ export const Die: React.FC<DieProsType> = ({dieInfo, clickHandler}) => {
     5: faDiceFive,
     6: faDiceSix
   };
+
+
   return (
-    <StyledDieButton isFrozen={isFrozen} onClick={clickHandler}>
+    <StyledDieButton isSpinning={isSpinning} isFrozen={isFrozen} onClick={()=>clickHandler(id)}>
       <FontAwesomeIcon icon={diceView[value]} />
     </StyledDieButton>
   );
 };
 
-const StyledDieButton = styled.button<{isFrozen: boolean}>`
-    margin: 0 1rem;
+const RollingAnimation = keyframes`
+  0% {
+    transform: rotate(0deg)
+  }
+  100% {
+    transform: rotate(360deg)
+  }
+`
+
+
+const StyledDieButton = styled.button<{isSpinning: boolean, isFrozen: boolean}>`
+    margin: 1rem;
     border: none;
     overflow: hidden;
     padding: 0;
@@ -48,5 +61,6 @@ const StyledDieButton = styled.button<{isFrozen: boolean}>`
     &:focus {
         outline: none;
     }
-    /* filter: drop-shadow(.3rem .3rem .3rem black) */
+    animation: ${ p => (p.isSpinning && !p.isFrozen) && RollingAnimation } .5s infinite;
+
 `;

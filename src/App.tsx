@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect , useCallback} from "react";
+import React, { useReducer, useCallback } from "react";
 import "./App.css";
 import { createAction } from "./actions";
 import { Dies } from "./Dies";
@@ -130,8 +130,8 @@ const getRule = (rule: Rule) => {
     case "HighStraight":
       return (dice: DieType[]) =>
         freqance(dice).length === 5 &&
-        (!dice.map(d => d.value).includes(6) ||
-          !dice.map(d => d.value).includes(1))
+          (!dice.map(d => d.value).includes(6) ||
+            !dice.map(d => d.value).includes(1))
           ? 40
           : 0;
     default:
@@ -191,7 +191,7 @@ const reducer = (state: GameState, action: Actions) => {
       });
     }
     case "spinnToogle":
-      return extState({dice: state.dice.map( d=> d.id === action.payload ? { ...d, isSpinning: !d.isSpinning} : d )})
+      return extState({ dice: state.dice.map(d => d.id === action.payload ? { ...d, isSpinning: !d.isSpinning } : d) })
     case "unfreezeAll":
       return extState({
         dice: state.dice.map(d => ({ ...d, isFrozen: false }))
@@ -218,9 +218,16 @@ const reducer = (state: GameState, action: Actions) => {
 export const App: React.FC = () => {
   const [game, gameDispatch] = useReducer(reducer, initialState);
 
-  useEffect( () => {
-    spinn()
-  }, [])
+  const spinn = useCallback(
+    () => {
+      game.dice.forEach(d => gameDispatch(actions.spinnToogle(d.id)))
+      setTimeout(() => game.dice.forEach(d => gameDispatch(actions.spinnToogle(d.id))), 500)
+    }, [game]
+  )
+
+  // useEffect(() => {
+  //   spinn()
+  // }, [])
 
   const handleRoll = () => {
     if (game.rollsLeft) {
@@ -246,17 +253,12 @@ export const App: React.FC = () => {
     spinn()
   };
 
-  const spinn = useCallback(
-      () => {
-        game.dice.forEach( d => gameDispatch(actions.spinnToogle(d.id)))
-        setTimeout( ()=>game.dice.forEach( d => gameDispatch(actions.spinnToogle(d.id))), 500 )
-    },[game.dice]
-  )
+
 
   const calcRoundsLeft = () => {
     let left = 0
     for (const key in game.scores) {
-        game.scores[key as Rule] === undefined && left++  
+      game.scores[key as Rule] === undefined && left++
     }
     return left
   }
@@ -286,8 +288,8 @@ export const App: React.FC = () => {
             {typeof game.scores[rule] === "undefined" ? (
               <button onClick={() => handleCalc(game.dice, rule)}>use</button>
             ) : (
-              <p>{game.scores[rule]}</p>
-            )}
+                <p>{game.scores[rule]}</p>
+              )}
           </ScoreItemStyled>
         ))}
         <TotalScoreParagraf>Total Score: {game.totalScores}</TotalScoreParagraf>

@@ -271,8 +271,9 @@ export const App: React.FC = () => {
         clickHandler={(id: string) => gameDispatch(actions.freezeToggle(id))}
       />
       <PanelStyled>
+        <p>{game.rollsLeft === 1 ? `You can roll last time` : `You have ${game.rollsLeft} rolls left`} </p>
         <button onClick={handleRoll} disabled={game.rollsLeft === 0}>
-          You have {game.rollsLeft} rols left{" "}
+          {game.rollsLeft === 0 ? "no more rolls" : "roll again"}
         </button>
         <button onClick={() => gameDispatch(actions.unfreezeAll())}>
           unfreez all

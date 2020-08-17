@@ -86,7 +86,6 @@ const getRule = (rule: Rule) => {
     case "Fours":
     case "Fives":
     case "Sixes":
-      // console.log(rule);
       return (dice: DieType[]) =>
         dice.reduce(
           (score, die) =>
@@ -167,7 +166,7 @@ const initialState: GameState = {
   }
 };
 
-const extendObject = <T extends any>(baseObject: T) => (
+const extendObject = <T extends object>(baseObject: T) => (
   delta: Partial<T>
 ): T => ({ ...baseObject, ...delta });
 
@@ -262,7 +261,7 @@ export const App: React.FC = () => {
     return left
   }
 
-  const keys = <T extends any>(obj: T): Array<keyof T> => Object.keys(obj);
+  const keys = <T extends object>(obj: T): Array<keyof T> => Object.keys(obj) as Array<keyof typeof obj>;
   return (
     <div className="App">
       <Dies
